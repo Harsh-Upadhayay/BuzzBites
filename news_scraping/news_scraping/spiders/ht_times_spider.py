@@ -5,6 +5,7 @@ from scrapy.spidermiddlewares.httperror import HttpError
 from twisted.internet.error import DNSLookupError, TimeoutError, TCPTimedOutError
 
 class HindustanTimesSpider(scrapy.Spider):
+    
     name = 'hindustan_times_news'
     allowed_domains = ['www.hindustantimes.com']
     error_page = open('error_page.log','a')
@@ -14,7 +15,7 @@ class HindustanTimesSpider(scrapy.Spider):
 
         yield scrapy.Request(
             url=url,
-            callback=self.parse_firm,
+            callback=self.parse_news,
             errback=self.errback_httpbin,
         )
 
@@ -26,7 +27,7 @@ class HindustanTimesSpider(scrapy.Spider):
 
             news_item['news_id'] = news.attrib['data-vars-storyid']
             news_item['news_url'] = news.attrib['data-weburl']
-            news_item['news_title'] = news.attrib['data-vars-story-title']
+            news_item['news_title'] = TextHandler()._filter_text(news.attrib['data-vars-story-title'])
             news_item['news_time'] = news.attrib['data-vars-story-time']
 
             yield scrapy.Request(
@@ -37,28 +38,14 @@ class HindustanTimesSpider(scrapy.Spider):
 
     def parse_data(self, response):
         news_item = response.meta['item']
-
         story_content = []
-        current_paragraph = ''
-        
-        news_details = response.css('div.storyDetails > p, div.storyDetails > h1, div.storyDetails > h2, div.storyDetails > h3, div.storyDetails > h4, div.storyDetails > h5, div.storyDetails > h6')
-        
-        for element in news_details:
 
-            if current_paragraph:
-                story_content.append(current_paragraph.strip())
-                current_paragraph = ''
-
-            if element.root.tag == 'p':
-                story_content.append(element.get().strip())
-            else:
-                story_content.append(element.css('*::text').get().strip())
-        
-        if current_paragraph:
-            story_content.append(current_paragraph.strip())
-
+        news_details = response.css('div.storyDetails p')
+        for news_p in news_details:
+            story_content.append(news_p.css("::text").get())
 
         news_item['news_description'] = TextHandler()._filter_text(story_content)
+        
         yield news_item
 
 

@@ -11,7 +11,7 @@ from datetime import date
 from .items import HtTimesNewsItem
 
 
-class NewsScrapingPipeline:
+class HindustanNewsScrapingPipeline:
     def __init__(self):
         pass
 
