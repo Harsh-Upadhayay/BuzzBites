@@ -6,7 +6,7 @@
 import scrapy
 
 
-class HtTimesNewsItem(scrapy.Item):
+class HindustanTimesItem(scrapy.Item):
     
     news_id = scrapy.Field()
     news_time = scrapy.Field()

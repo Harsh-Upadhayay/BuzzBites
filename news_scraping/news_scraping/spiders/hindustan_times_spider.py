@@ -1,12 +1,12 @@
 import scrapy
 from ..utils import TextHandler
-from ..items import HtTimesNewsItem
+from ..items import HindustanTimesItem
 from scrapy.spidermiddlewares.httperror import HttpError
 from twisted.internet.error import DNSLookupError, TimeoutError, TCPTimedOutError
 
 class HindustanTimesSpider(scrapy.Spider):
     
-    name = 'hindustan_times_news'
+    name = 'hindustan_times'
     allowed_domains = ['www.hindustantimes.com']
     error_page = open('error_page.log','a')
 
@@ -23,7 +23,7 @@ class HindustanTimesSpider(scrapy.Spider):
         newsList = response.css('div.cartHolder')
 
         for news in newsList:
-            news_item = HtTimesNewsItem()
+            news_item = HindustanTimesItem()
 
             news_item['news_id'] = news.attrib['data-vars-storyid']
             news_item['news_url'] = news.attrib['data-weburl']
@@ -47,8 +47,6 @@ class HindustanTimesSpider(scrapy.Spider):
         news_item['news_description'] = TextHandler()._filter_text(story_content)
         
         yield news_item
-
-
 
 
     def errback_httpbin(self, failure):

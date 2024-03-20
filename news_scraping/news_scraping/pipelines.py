@@ -8,7 +8,7 @@
 import csv
 from datetime import date
 
-from .items import HtTimesNewsItem
+from .items import HindustanTimesItem
 
 
 class HindustanNewsScrapingPipeline:
@@ -26,6 +26,6 @@ class HindustanNewsScrapingPipeline:
         self.filename.close()
 
     def process_item(self, item, spider):
-        if isinstance(item, HtTimesNewsItem):
+        if isinstance(item, HindustanTimesItem):
             self.csv_analysis.writerow([item['news_id'], item['news_time'],item['news_url'],item['news_title'],item['news_description']])
 
