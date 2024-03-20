@@ -6,7 +6,16 @@
 import scrapy
 
 
-class NewsScrapingItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+class HtTimesNewsItem(scrapy.Item):
+    
+    news_id = scrapy.Field()
+    news_time = scrapy.Field()
+    news_url = scrapy.Field()
+    news_title = scrapy.Field()
+    news_description = scrapy.Field()
+
+
+    def set_all(self, value):
+        for keys, _ in self.fields.items():
+            self[keys] = value
+
