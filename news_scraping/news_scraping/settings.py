@@ -20,7 +20,7 @@ CONCURRENT_REQUESTS = 8
 
 # Configure item pipelines
 ITEM_PIPELINES = {
-   "news_scraping.pipelines.HindustanNewsScrapingPipeline": 300,
+   "news_scraping.pipelines.HindustanNewsScrapingPipeline": 500,
 }
 
 REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
