@@ -10,6 +10,10 @@ class HindustanTimesSpider(scrapy.Spider):
     allowed_domains = ['www.hindustantimes.com']
     error_page = open('hindustan_times_error_page.log','a')
 
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_scraping.pipelines.HindustanNewsScrapingPipeline': 300}
+    }
+
     def start_requests(self):
         url = "https://www.hindustantimes.com/topic/ipl/news"
 

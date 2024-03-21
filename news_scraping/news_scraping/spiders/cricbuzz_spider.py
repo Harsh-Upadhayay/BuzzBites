@@ -1,17 +1,21 @@
 import scrapy
-from ..utils import TextHandler
-from ..items import HindustanTimesItem
+from ..utils import TextHandler, UrlParser
+from ..items import HindustanTimesItem, CricbuzzNewsItem
 from scrapy.spidermiddlewares.httperror import HttpError
 from twisted.internet.error import DNSLookupError, TimeoutError, TCPTimedOutError
 
 class HindustanTimesSpider(scrapy.Spider):
     
-    name = 'hindustan_times'
-    allowed_domains = ['www.hindustantimes.com']
+    name = 'cricbuzz_news'
+    allowed_domains = ['www.cricbuzz.com']
     error_page = open('cricbuzz_error_page.log','a')
 
+    custom_settings = {
+        'ITEM_PIPELINES': {'news_scraping.pipelines.CricbuzzNewsScrapingPipeline': 300}
+    }
+
     def start_requests(self):
-        url = "https://www.hindustantimes.com/topic/ipl/news"
+        url = "https://www.cricbuzz.com/cricket-news"
 
         yield scrapy.Request(
             url=url,
@@ -20,33 +24,49 @@ class HindustanTimesSpider(scrapy.Spider):
         )
 
     def parse_news(self, response):
-        newsList = response.css('div.cartHolder')
-
-        for news in newsList:
-            news_item = HindustanTimesItem()
-
-            news_item['news_id'] = news.attrib['data-vars-storyid']
-            news_item['news_url'] = news.attrib['data-weburl']
-            news_item['news_title'] = TextHandler()._filter_text(news.attrib['data-vars-story-title'])
-            news_item['news_time'] = news.attrib['data-vars-story-time']
+        latest_news_url = response.css('a.cb-nws-hdln-ancr::attr(href)').get()
+        latest_news_id = UrlParser(latest_news_url).get_latest_news_id()
+        
+        for i in range(100):
+            news_id = int(latest_news_id) - i
+            news_url = f"https://www.cricbuzz.com/cricket-news/{news_id}/1"
 
             yield scrapy.Request(
-                url = news.attrib['data-weburl'],
+                url = news_url,
                 callback = self.parse_data,
-                meta={'item': news_item}
+                meta = {'news_id' : news_id}
             )
 
     def parse_data(self, response):
-        news_item = response.meta['item']
-        story_content = []
 
-        news_details = response.css('div.storyDetails p')
-        for news_p in news_details:
-            story_content.append(news_p.css("::text").get())
+        category = response.css('div.cb-nws-sub-txt span.cb-text-gray::text').get()
+        category = TextHandler()._filter_text(category)
 
-        news_item['news_description'] = TextHandler()._filter_text(story_content)
+
+        if(category == 'IPL 2024'):
+            news_item = CricbuzzNewsItem()
+            news_item['news_category'] = category
+            news_item['news_id'] = response.meta['news_id']
+
+            date_published = response.css('time[itemprop="datePublished"]::attr(datetime)').get()
+            news_item['news_published_time'] = TextHandler()._filter_text(date_published)
+
+            date_modified = response.css('time[itemprop="dateModified"]::attr(datetime)').get()
+            news_item['news_modified_time'] = TextHandler()._filter_text(date_modified)
+
+            news_url = response.css('meta[itemprop="mainEntityOfPage"]::attr(content)').get()
+            news_item['news_url'] = news_url
+
+            news_title = response.css('h1[itemprop="headline"]::text').get()
+            news_item['news_title'] = TextHandler()._filter_text(news_title)
+
+            description_sections = response.css('section[itemprop="articleBody"] p.cb-nws-para')
+            description = ""
+            for section in description_sections:
+                description += section.css('::text').get() + "\n"
+            news_item['news_description'] = TextHandler()._filter_text(description)
         
-        yield news_item
+            yield news_item
 
 
     def errback_httpbin(self, failure):
