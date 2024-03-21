@@ -1,0 +1,2 @@
+Robots file : https://m.cricbuzz.com/robots.txt
+sitemap can be obtained from the robots file too

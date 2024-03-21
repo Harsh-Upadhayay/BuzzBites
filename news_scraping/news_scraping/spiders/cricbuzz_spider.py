@@ -8,7 +8,7 @@ class HindustanTimesSpider(scrapy.Spider):
     
     name = 'hindustan_times'
     allowed_domains = ['www.hindustantimes.com']
-    error_page = open('hindustan_times_error_page.log','a')
+    error_page = open('cricbuzz_error_page.log','a')
 
     def start_requests(self):
         url = "https://www.hindustantimes.com/topic/ipl/news"
