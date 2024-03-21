@@ -7,7 +7,7 @@ NEWSPIDER_MODULE = "news_scraping.spiders"
 LOG_FILE = 'error.log'
 
 # Obey robots.txt rules
-ROBOTSTXT_OBEY = True
+ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 CONCURRENT_REQUESTS = 8
@@ -19,9 +19,9 @@ CONCURRENT_REQUESTS = 8
 #}
 
 # Configure item pipelines
-ITEM_PIPELINES = {
-   "news_scraping.pipelines.HindustanNewsScrapingPipeline": 500,
-}
+# ITEM_PIPELINES = {
+#    "news_scraping.pipelines.HindustanNewsScrapingPipeline": 500,
+# }
 
 REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
