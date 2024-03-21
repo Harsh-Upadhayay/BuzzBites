@@ -8,7 +8,7 @@
 import csv
 from datetime import date
 
-from .items import HindustanTimesItem
+from .items import HindustanTimesItem, CricbuzzNewsItem
 
 
 class HindustanNewsScrapingPipeline:
@@ -17,15 +17,71 @@ class HindustanNewsScrapingPipeline:
 
     def open_spider(self, spider):
         filedate = date.today().strftime("%Y%m%d")
-        filename = filedate +  'ht_times_news.csv'
+        filename = filedate +  '_hindustan_times_news.csv'
         self.filename = open(filename, mode='w', encoding='utf_8_sig', newline='')
         self.csv_analysis = csv.writer(self.filename, quoting=csv.QUOTE_ALL)
-        self.csv_analysis.writerow(["news_id", "news_time", "news_url", "news_title", "news_description"])
+        self.csv_analysis.writerow(
+            [
+                "news_id", 
+                "news_time", 
+                "news_url", 
+                "news_title", 
+                "news_description"
+            ]
+        )
 
     def close_spider(self, spider):
         self.filename.close()
 
     def process_item(self, item, spider):
         if isinstance(item, HindustanTimesItem):
-            self.csv_analysis.writerow([item['news_id'], item['news_time'],item['news_url'],item['news_title'],item['news_description']])
+            self.csv_analysis.writerow(
+                [
+                    item['news_id'], 
+                    item['news_time'],
+                    item['news_url'],
+                    item['news_title'],
+                    item['news_description']
+                ]
+            )
+
+
+
+class CricbuzzNewsScrapingPipeline:
+    def __init__(self):
+        pass
+
+    def open_spider(self, spider):
+        filedate = date.today().strftime("%Y%m%d")
+        filename = filedate +  '_cricbuzz_news.csv'
+        self.filename = open(filename, mode='w', encoding='utf_8_sig', newline='')
+        self.csv_analysis = csv.writer(self.filename, quoting=csv.QUOTE_ALL)
+        self.csv_analysis.writerow(
+            [
+                "news_id", 
+                "news_category", 
+                "news_published_time", 
+                "news_modified_time", 
+                "news_url", 
+                "news_title", 
+                "news_description"
+            ]
+        )
+
+    def close_spider(self, spider):
+        self.filename.close()
+
+    def process_item(self, item, spider):
+        if isinstance(item, CricbuzzNewsItem):
+            self.csv_analysis.writerow(
+                [
+                    item['news_id'],
+                    item['news_category'], 
+                    item['news_published_time'],
+                    item['news_modified_time'],
+                    item['news_url'], 
+                    item['news_title'], 
+                    item['news_description']
+                ]
+            )
 

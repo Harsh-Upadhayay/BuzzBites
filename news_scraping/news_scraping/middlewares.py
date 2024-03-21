@@ -7,6 +7,11 @@ from scrapy import signals
 
 # useful for handling different item types with a single interface
 from itemadapter import is_item, ItemAdapter
+from scrapy.exceptions import NotConfigured
+from .pipelines import (
+    HindustanNewsScrapingPipeline,
+    CricbuzzNewsScrapingPipeline
+)
 
 
 class NewsScrapingSpiderMiddleware:
@@ -54,6 +59,20 @@ class NewsScrapingSpiderMiddleware:
 
     def spider_opened(self, spider):
         spider.logger.info("Spider opened: %s" % spider.name)
+
+        # Create a Map of the spiders and their corresponding pipelines
+        pipeline_mapping = {
+            'hindustan_times': HindustanNewsScrapingPipeline,
+            'cricbuzz_news': CricbuzzNewsScrapingPipeline,
+        }
+
+        pipeline_class = pipeline_mapping.get(spider.name)
+        if pipeline_class:
+            spider.settings.set('ITEM_PIPELINES', {
+                pipeline_class: 500,
+            }, priority='spider')
+        else:
+            raise NotConfigured(f"No pipeline found for spider {spider.name}")
 
 
 class NewsScrapingDownloaderMiddleware:
