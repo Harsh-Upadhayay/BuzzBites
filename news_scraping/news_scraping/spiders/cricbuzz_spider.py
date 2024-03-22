@@ -43,7 +43,7 @@ class HindustanTimesSpider(scrapy.Spider):
         category = TextHandler()._filter_text(category)
 
 
-        if(category == 'IPL 2024'):
+        if ('IPL 2024') in category:
             news_item = CricbuzzNewsItem()
             news_item['news_category'] = category
             news_item['news_id'] = response.meta['news_id']
