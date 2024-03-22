@@ -31,6 +31,8 @@ class GoogleSearchSpider(scrapy.Spider):
         
     def start_requests(self):
         queries = self.generate_queries()
+        #NOTE: Only run for first query for testing purposes. It'll give too many request error otherwise.
+        #TODO: Workaround for too many requests error.
         queries = queries[:1]
         for query in queries:
             url = self.base_url.format(query=query, time_frame=self.get_time_frame())
