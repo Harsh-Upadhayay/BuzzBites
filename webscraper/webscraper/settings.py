@@ -92,5 +92,7 @@ REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
 
-IMAGES_STORE = "/home/harsh/BuzzBites/images"
+IMAGES_STORE = "../images/"
+IMAGES_URLS_FIELD = "image_urls"
+IMAGES_RESULT_FIELD = "images"
 USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36'
