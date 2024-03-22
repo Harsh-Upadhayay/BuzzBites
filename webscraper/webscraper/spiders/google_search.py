@@ -64,7 +64,7 @@ class GoogleSearchSpider(scrapy.Spider):
 
             try:
                 url = (re.findall(pattern, match)[1])
-                
+                #TODO: Properly use image pipeline, the current code might be incorrect from the pipeline perspective.
                 yield(WebscraperItem(image_urls=[url]))
             except:
                 pass
