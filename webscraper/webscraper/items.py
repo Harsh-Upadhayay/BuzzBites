@@ -8,5 +8,5 @@ import scrapy
 
 class WebscraperItem(scrapy.Item):
     # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+    image_urls = scrapy.Field()
+    images = scrapy.Field()

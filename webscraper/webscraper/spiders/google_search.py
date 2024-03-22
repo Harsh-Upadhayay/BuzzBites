@@ -1,10 +1,11 @@
 import scrapy
 import argparse
 from ..spider_inputs import google_search_queries, team_names, player_names
+from ..items import WebscraperItem
+import re
 
 class GoogleSearchSpider(scrapy.Spider):
     name = 'google_search'
-    allowed_domains = ['google.com']
     
     def __init__(self, time_frame='', *args, **kwargs):
         super(GoogleSearchSpider, self).__init__(*args, **kwargs)
@@ -30,7 +31,7 @@ class GoogleSearchSpider(scrapy.Spider):
         
     def start_requests(self):
         queries = self.generate_queries()
-        
+        queries = queries[:1]
         for query in queries:
             url = self.base_url.format(query=query, time_frame=self.get_time_frame())
             yield scrapy.Request(url, callback=self.parse, meta={'query': query})
@@ -46,9 +47,23 @@ class GoogleSearchSpider(scrapy.Spider):
             return ''
             
     def parse(self, response):
-        query = response.meta.get('query')
-        image_urls = response.css('img.rg_ic::attr(src)').getall()
-        yield {
-            'query': query,
-            'image_urls': image_urls
-        }
+        
+        img_ids = response.css('div[jsaction="TMn9y:cJhY7b;;cFWHmd:s370ud;"] ::attr(data-tbnid)').getall()
+        pattern = r'\{\s*"444383007"\s*:.+?\}'
+
+        matches = re.findall(pattern, response.text)
+        ct = 0
+        urls = []
+        for match in matches:
+            
+        # print(match)
+
+            pattern = r'http[^ ^"]+'
+
+            try:
+                url = (re.findall(pattern, match)[1])
+                
+                yield(WebscraperItem(image_urls=[url]))
+            except:
+                pass
+
