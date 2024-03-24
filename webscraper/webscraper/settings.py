@@ -7,6 +7,8 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
+from decouple import config
+
 BOT_NAME = "webscraper"
 
 SPIDER_MODULES = ["webscraper.spiders"]
@@ -92,7 +94,5 @@ REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
 
-IMAGES_STORE = "../images/"
-IMAGES_URLS_FIELD = "image_urls"
-IMAGES_RESULT_FIELD = "images"
+IMAGES_STORE = config('IMAGES_STORE')
 USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36'
