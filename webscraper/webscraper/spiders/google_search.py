@@ -1,5 +1,4 @@
 import scrapy
-import argparse
 from ..spider_inputs import google_search_queries, team_names, player_names
 from ..items import WebscraperItem
 import re
