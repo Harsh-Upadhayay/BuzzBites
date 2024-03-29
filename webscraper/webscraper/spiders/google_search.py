@@ -1,6 +1,6 @@
 import scrapy
 from ..spider_inputs import google_search_queries, team_names, player_names
-from ..items import WebscraperItem
+from ..items import Meme
 import re
 
 class GoogleSearchSpider(scrapy.Spider):
@@ -57,14 +57,11 @@ class GoogleSearchSpider(scrapy.Spider):
         urls = []
         for match in matches:
             
-        # print(match)
-
             pattern = r'http[^ ^"]+'
 
             try:
                 url = (re.findall(pattern, match)[1])
-                #TODO: Properly use image pipeline, the current code might be incorrect from the pipeline perspective.
-                yield(WebscraperItem(image_urls=[url]))
+                yield(Meme(image_urls=[url]))
             except:
                 pass
 

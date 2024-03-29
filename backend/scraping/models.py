@@ -3,7 +3,7 @@ from django.db import models
 # Create your models here.
 
 
-class meme(models.Model):
+class Meme(models.Model):
     search_tag = models.CharField(
         max_length=100,
         help_text="Input tag with which the spider will scrape memes.",
