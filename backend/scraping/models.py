@@ -56,3 +56,48 @@ class Meme(models.Model):
         ordering = ['-updated_at']
         constraints = [UniqueConstraint(fields=['checksum'], name='unique_checksum')]
         
+
+class BaseNews(models.Model):
+    news_id = 
+
+    search_tag = models.CharField(
+        max_length=100,
+        help_text="Input tag with which the spider will scrape memes.",
+    )
+    img_url = models.CharField(
+        max_length=400, help_text="Source URL of the meme. (ends with .jpg, .png, etc.)"
+    )
+    local_path = models.CharField(
+        max_length=200,
+        null=True,
+        default=None,
+        help_text="Path where the meme is stored on the server.",
+    )
+    checksum = models.CharField(
+        max_length=32,
+        null=True,
+        default=None,
+        help_text="Checksum of the meme image.",
+    )
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        help_text="Scraping status of the meme image.",
+    )   
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    
+    @sync_to_async
+    def async_save(self):
+        try:
+            self.save()
+        except IntegrityError:
+            existing_obj = Meme.objects.get(checksum=self.checksum)
+            existing_obj.updated_at=timezone.now()
+            existing_obj.save()
+        except:
+            pass    
+        
+    class Meta:
+        abstract = True
