@@ -38,8 +38,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
+    # Externals
+    'rest_framework',
+    'django_filters',
+    
     # Internals
     'scraping',
+    'api',
+    'authentication',
 ]
 
 MIDDLEWARE = [
@@ -85,6 +91,10 @@ DATABASES = {
         'HOST': config('DB_HOST'),   # Or an IP Address that your DB is hosted on
         'PORT': config('DB_PORT'),
     }
+}
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10  # Number of items per page
 }
 
 
