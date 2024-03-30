@@ -84,7 +84,6 @@ class BaseNews(models.Model):
             existing_obj.updated_at = timezone.now()
             existing_obj.save()
 
-
 class HindustanTimesNews(BaseNews):
     class Meta:
         ordering = ['-created_at']
