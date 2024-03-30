@@ -9,7 +9,7 @@ from scraping import models
 
 
 class Meme(DjangoItem):
-    # define the fields for your item here like:
+
     django_model = models.Meme
     image_urls = scrapy.Field()
     images = scrapy.Field()
