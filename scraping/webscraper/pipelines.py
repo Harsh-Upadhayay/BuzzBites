@@ -58,6 +58,14 @@ class ImageProcessingPipeline(ImagesPipeline):
         
         return item
 
+class HindustanNewsScrapingPipeline:
+    def __init__(self):
+        pass
+
+class CricbuzzNewsProcessingPipeline:
+    def __init__(self):
+        pass
+
 
 class DjangoItemSavingPipeline:
     async def process_item(self, item, spider):
