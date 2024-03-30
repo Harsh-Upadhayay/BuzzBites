@@ -64,3 +64,20 @@ def gen_backend_path():
         return backend
 
     return None
+
+def gen_scraping_path():
+    """
+    Find the path to the scraping directory.
+
+    Returns:
+        str or None: The path to the scraping directory if found, otherwise None.
+    """
+    backend = gen_backend_path()
+    if backend is None:
+        return None
+
+    scraping = os.path.join(backend, 'scraping')
+    if os.path.exists(scraping):
+        return scraping
+
+    return None
