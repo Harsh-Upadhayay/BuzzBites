@@ -87,7 +87,7 @@ class BaseNews(models.Model):
 class HindustanTimesNews(BaseNews):
     class Meta:
         ordering = ['-created_at']
-        constraints = [UniqueConstraint(fields=['news_id'], name='unique_newsid')]
+        constraints = [UniqueConstraint(fields=['news_id'], name='unique_newsid_hindustan')]
 
 class CricbuzzNews(BaseNews):
     news_category = models.CharField(
@@ -96,5 +96,5 @@ class CricbuzzNews(BaseNews):
     )
     class Meta:
         ordering = ['-created_at']
-        constraints = [UniqueConstraint(fields=['news_id'], name='unique_newsid')]
+        constraints = [UniqueConstraint(fields=['news_id'], name='unique_newsid_cricbuzz')]
         
