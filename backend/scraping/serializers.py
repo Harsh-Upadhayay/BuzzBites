@@ -10,12 +10,24 @@ class MemeSerializer(serializers.ModelSerializer):
         model = Meme
         fields = '__all__'
 
-class CricbuzzNewsSerializer(serializers.ModelSerializer):
+class NewsSerializer(serializers.ModelSerializer):
+    # news_id = serializers.CharField()
+    # news_url = serializers.CharField()
+    # news_title = serializers.CharField()
+    # news_description = serializers.CharField()
+    # news_summary = serializers.CharField()
+    # created_at = serializers.DateTimeField()
+    # updated_at = serializers.DateTimeField()
     class Meta:
+        model = None  # Setting to None as we will define it dynamically based on the queryset
+
+
+class CricbuzzNewsSerializer(NewsSerializer):
+    class Meta(NewsSerializer.Meta):
         model = CricbuzzNews
         fields = '__all__'
 
-class HindustanTimesNewsSerializer(serializers.ModelSerializer):
-    class Meta:
+class HindustanTimesNewsSerializer(NewsSerializer):
+    class Meta(NewsSerializer.Meta):
         model = HindustanTimesNews
         fields = '__all__'
