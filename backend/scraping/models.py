@@ -67,9 +67,9 @@ class NewsArticle(models.Model):
         null=True,
         default=None,
     )
-    title = models.TextField()
-    description = models.TextField()
-    summary = models.TextField()
+    title = models.TextField(blank=True)
+    description = models.TextField(blank=True)
+    summary = models.TextField(blank=True)
     source = models.CharField(
         max_length=255,
         choices=SOURCE_CHOICES
@@ -80,7 +80,11 @@ class NewsArticle(models.Model):
         blank=True,
         null=True
     )
-    published_at = models.DateField()
+    published_at = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True) 
 

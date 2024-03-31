@@ -10,7 +10,7 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'core.settings'
 django.setup()
 
 LOG_FILE = 'scrapy.log'
-LOG_LEVEL = 'ERROR'
+LOG_LEVEL = 'INFO'
 BOT_NAME = "webscraper"
 SPIDER_MODULES = ["webscraper.spiders"]
 NEWSPIDER_MODULE = "webscraper.spiders"

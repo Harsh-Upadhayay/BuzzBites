@@ -11,6 +11,9 @@ from scraping import models
 class Meme(DjangoItem):
     django_model = models.Meme
 
+class NewsArticle(DjangoItem):
+    django_model = models.NewsArticle
+
 class HindustanTimesNews(DjangoItem):
     django_model = models.HindustanTimesNews
 
