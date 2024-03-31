@@ -1,6 +1,6 @@
 import scrapy
 from bb_utils.news_utils import TextHandler, UrlParser
-from ..items import CricbuzzNews
+from ..items import NewsArticle
 
 class CricbuzzSpider(scrapy.Spider):
     
@@ -8,7 +8,10 @@ class CricbuzzSpider(scrapy.Spider):
     allowed_domains = ['www.cricbuzz.com']
 
     custom_settings = {
-        'ITEM_PIPELINES': {'webscraper.pipelines.CricbuzzNewsScrapingPipeline': 300}
+        'ITEM_PIPELINES': {
+            'webscraper.pipelines.CricbuzzNewsScrapingPipeline': 1,
+            'webscraper.pipelines.DjangoItemSavingPipeline': 2
+        }
     }
 
     def start_requests(self):
@@ -23,7 +26,7 @@ class CricbuzzSpider(scrapy.Spider):
         latest_news_url = response.css('a.cb-nws-hdln-ancr::attr(href)').get()
         latest_news_id = UrlParser(latest_news_url).get_latest_news_id()
         
-        for i in range(100):
+        for i in range(4):
             news_id = int(latest_news_id) - i
             news_url = f"https://www.cricbuzz.com/cricket-news/{news_id}/1"
 
@@ -51,12 +54,11 @@ class CricbuzzSpider(scrapy.Spider):
             for section in description_sections:
                 description += section.css('::text').get() + "\n"
 
-
-            yield CricbuzzNews (
-                news_id = TextHandler()._filter_text(response.meta['news_id']),
-                news_url = news_url,
-                news_title = TextHandler()._filter_text(news_title),
-                news_description = TextHandler()._filter_text(description),
-                created_at = TextHandler()._filter_text(date_published),
-                news_category = category
+            yield NewsArticle (
+                news_id = response.meta['news_id'],
+                url = news_url,
+                title = TextHandler()._filter_text(news_title),
+                description = TextHandler()._filter_text(description),
+                published_at = TextHandler()._filter_text(date_published),
+                category = category
             )
