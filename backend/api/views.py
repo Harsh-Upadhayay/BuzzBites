@@ -7,11 +7,13 @@ from scraping.models import (
 )
 from scraping.serializers import (
     MemeSerializer,
+    NewsSerializer,
     HindustanTimesNewsSerializer,
     CricbuzzNewsSerializer
 )
 from rest_framework.pagination import PageNumberPagination
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.response import Response
 
 
 class MemeListPagination(PageNumberPagination):
@@ -38,14 +40,20 @@ class MemeListAPIView(generics.ListAPIView):
         return queryset
 
 class NewsListAPIView(generics.ListAPIView):
-    queryset = HindustanTimesNews.objects.all().union(CricbuzzNews.objects.all())
-    # serializer_class = CombinedNewsSerializer  # Create a serializer for combined news
-    filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
-    ordering_fields = '__all__'
-    ordering = ['-created_at']
+    serializer_class = None
     pagination_class = NewsListPagination
-    filterset_fields = '__all__'
+
+    def get_serializer_class(self):
+        queryset = self.get_queryset()
+        if queryset and isinstance(queryset[0], HindustanTimesNews):
+            return HindustanTimesNewsSerializer
+        elif queryset and isinstance(queryset[0], CricbuzzNews):
+            return CricbuzzNewsSerializer
+        return NewsSerializer
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        hindustan_news = HindustanTimesNews.objects.all()
+        cricbuzz_news = CricbuzzNews.objects.all()
+        queryset = list(hindustan_news) + list(cricbuzz_news)
+        queryset.sort(key=lambda x: x.created_at, reverse=True)
         return queryset
