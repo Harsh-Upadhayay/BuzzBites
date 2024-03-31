@@ -1,6 +1,6 @@
 import scrapy
 from bb_utils.news_utils import TextHandler
-from ..items import HindustanTimesNews
+from ..items import NewsArticle
 
 class HindustanTimesSpider(scrapy.Spider):
     
@@ -8,7 +8,11 @@ class HindustanTimesSpider(scrapy.Spider):
     allowed_domains = ['www.hindustantimes.com']
 
     custom_settings = {
-        'ITEM_PIPELINES': {'webscraper.pipelines.HindustanNewsScrapingPipeline': 300}
+        'ITEM_PIPELINES': {
+            'webscraper.pipelines.HindustanTimesNewsScrapingPipeline': 1,
+            'webscraper.pipelines.DjangoItemSavingPipeline': 2
+
+        }
     }
 
     def start_requests(self):
@@ -45,10 +49,10 @@ class HindustanTimesSpider(scrapy.Spider):
         for news_p in news_details:
             story_content.append(news_p.css("::text").get())
 
-        yield HindustanTimesNews (
+        yield NewsArticle (
             news_id = news_item['news_id'],
-            news_url = news_item['news_url'],
-            news_title = news_item['news_title'],
-            news_description = TextHandler()._filter_text(story_content),
-            created_at = news_item['news_time'],
+            url = news_item['news_url'],
+            title = news_item['news_title'],
+            description = TextHandler()._filter_text(story_content),
+            published_at = news_item['news_time'],
         )
