@@ -13,9 +13,3 @@ class Meme(DjangoItem):
 
 class NewsArticle(DjangoItem):
     django_model = models.NewsArticle
-
-class HindustanTimesNews(DjangoItem):
-    django_model = models.HindustanTimesNews
-
-class CricbuzzNews(DjangoItem):
-    django_model = models.CricbuzzNews

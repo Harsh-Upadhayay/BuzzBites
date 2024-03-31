@@ -1,8 +1,7 @@
 from rest_framework import serializers
 from .models import(
     Meme,
-    CricbuzzNews,
-    HindustanTimesNews
+    NewsArticle,
 )
 
 class MemeSerializer(serializers.ModelSerializer):
@@ -10,17 +9,7 @@ class MemeSerializer(serializers.ModelSerializer):
         model = Meme
         fields = '__all__'
 
-class NewsSerializer(serializers.ModelSerializer):
+class NewsArticleSerializer(serializers.ModelSerializer):
     class Meta:
-        model = None
-
-
-class CricbuzzNewsSerializer(NewsSerializer):
-    class Meta(NewsSerializer.Meta):
-        model = CricbuzzNews
-        fields = '__all__'
-
-class HindustanTimesNewsSerializer(NewsSerializer):
-    class Meta(NewsSerializer.Meta):
-        model = HindustanTimesNews
+        model = NewsArticle
         fields = '__all__'

@@ -2,14 +2,11 @@ from rest_framework import generics
 from rest_framework.filters import OrderingFilter, SearchFilter
 from scraping.models import (
     Meme,
-    HindustanTimesNews,
-    CricbuzzNews
+    NewsArticle,
 )
 from scraping.serializers import (
     MemeSerializer,
-    NewsSerializer,
-    HindustanTimesNewsSerializer,
-    CricbuzzNewsSerializer
+    NewsArticleSerializer
 )
 from rest_framework.pagination import PageNumberPagination
 from django_filters.rest_framework import DjangoFilterBackend
@@ -40,20 +37,14 @@ class MemeListAPIView(generics.ListAPIView):
         return queryset
 
 class NewsListAPIView(generics.ListAPIView):
-    serializer_class = None
+    queryset = NewsArticle.objects.all()
+    serializer_class = NewsArticleSerializer
+    filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
+    ordering_fields = '__all__'
+    ordering = ['-updated_at']  # Default ordering by created_at field
     pagination_class = NewsListPagination
-
-    def get_serializer_class(self):
-        queryset = self.get_queryset()
-        if queryset and isinstance(queryset[0], HindustanTimesNews):
-            return HindustanTimesNewsSerializer
-        elif queryset and isinstance(queryset[0], CricbuzzNews):
-            return CricbuzzNewsSerializer
-        return NewsSerializer
+    filterset_fields = '__all__'  # Enable filtering based on all fields
 
     def get_queryset(self):
-        hindustan_news = HindustanTimesNews.objects.all()
-        cricbuzz_news = CricbuzzNews.objects.all()
-        queryset = list(hindustan_news) + list(cricbuzz_news)
-        queryset.sort(key=lambda x: x.created_at, reverse=True)
+        queryset = super().get_queryset()
         return queryset
