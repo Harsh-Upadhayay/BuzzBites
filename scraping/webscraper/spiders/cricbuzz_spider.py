@@ -1,17 +1,14 @@
 import scrapy
-from ..utils import TextHandler, UrlParser
-from ..items import HindustanTimesItem, CricbuzzNewsItem
-from scrapy.spidermiddlewares.httperror import HttpError
-from twisted.internet.error import DNSLookupError, TimeoutError, TCPTimedOutError
+from bb_utils.news_utils import TextHandler, UrlParser
+from ..items import CricbuzzNews
 
-class HindustanTimesSpider(scrapy.Spider):
+class CricbuzzSpider(scrapy.Spider):
     
     name = 'cricbuzz_news'
     allowed_domains = ['www.cricbuzz.com']
-    error_page = open('cricbuzz_error_page.log','a')
 
     custom_settings = {
-        'ITEM_PIPELINES': {'news_scraping.pipelines.CricbuzzNewsScrapingPipeline': 300}
+        'ITEM_PIPELINES': {'webscraper.pipelines.CricbuzzNewsScrapingPipeline': 300}
     }
 
     def start_requests(self):
@@ -19,8 +16,7 @@ class HindustanTimesSpider(scrapy.Spider):
 
         yield scrapy.Request(
             url=url,
-            callback=self.parse_news,
-            errback=self.errback_httpbin,
+            callback=self.parse_news
         )
 
     def parse_news(self, response):
@@ -42,43 +38,25 @@ class HindustanTimesSpider(scrapy.Spider):
         category = response.css('div.cb-nws-sub-txt span.cb-text-gray::text').get()
         category = TextHandler()._filter_text(category)
 
-
         if ('IPL 2024') in category:
-            news_item = CricbuzzNewsItem()
-            news_item['news_category'] = category
-            news_item['news_id'] = response.meta['news_id']
 
             date_published = response.css('time[itemprop="datePublished"]::attr(datetime)').get()
-            news_item['news_published_time'] = TextHandler()._filter_text(date_published)
-
             date_modified = response.css('time[itemprop="dateModified"]::attr(datetime)').get()
-            news_item['news_modified_time'] = TextHandler()._filter_text(date_modified)
 
             news_url = response.css('meta[itemprop="mainEntityOfPage"]::attr(content)').get()
-            news_item['news_url'] = news_url
-
             news_title = response.css('h1[itemprop="headline"]::text').get()
-            news_item['news_title'] = TextHandler()._filter_text(news_title)
 
             description_sections = response.css('section[itemprop="articleBody"] p.cb-nws-para')
             description = ""
             for section in description_sections:
                 description += section.css('::text').get() + "\n"
-            news_item['news_description'] = TextHandler()._filter_text(description)
-        
-            yield news_item
 
 
-    def errback_httpbin(self, failure):
-        self.logger.error(repr(failure))
-        if failure.check(HttpError):
-            response = failure.value.response
-            self.logger.error('HttpError on %s', response.url)
-            self.error_page.write(response.url+'\n')
-        elif failure.check(DNSLookupError):
-            request = failure.request
-            self.logger.error('DNSLookupError on %s', request.url)
-            self.error_page.write(request.url+'\n')
-        elif failure.check(TimeoutError, TCPTimedOutError):
-            request = failure.request
-            self.error_page.write(request.url+'\n')
+            yield CricbuzzNews (
+                news_id = TextHandler()._filter_text(response.meta['news_id']),
+                news_url = news_url,
+                news_title = TextHandler()._filter_text(news_title),
+                news_description = TextHandler()._filter_text(description),
+                created_at = TextHandler()._filter_text(date_published),
+                news_category = category
+            )
