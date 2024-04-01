@@ -9,8 +9,7 @@ class CricbuzzSpider(scrapy.Spider):
 
     custom_settings = {
         'ITEM_PIPELINES': {
-            'webscraper.pipelines.CricbuzzNewsScrapingPipeline': 1,
-            'webscraper.pipelines.DjangoItemSavingPipeline': 2
+            'webscraper.pipelines.DjangoItemSavingPipeline': 1
         }
     }
 
@@ -60,5 +59,6 @@ class CricbuzzSpider(scrapy.Spider):
                 title = TextHandler()._filter_text(news_title),
                 description = TextHandler()._filter_text(description),
                 published_at = TextHandler()._filter_text(date_published),
-                category = category
+                category = category,
+                source = 'CB'
             )
