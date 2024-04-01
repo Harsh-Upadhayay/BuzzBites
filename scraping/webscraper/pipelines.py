@@ -13,9 +13,6 @@ from scrapy.http.request import NO_CALLBACK
 from scrapy.pipelines.images import ImagesPipeline
 from scrapy.utils.python import to_bytes
 
-from datetime import datetime
-from bb_utils.news_summarizer import summarize_text
-
 class ImageProcessingPipeline(ImagesPipeline):
     settings = get_project_settings() 
 
@@ -60,43 +57,6 @@ class ImageProcessingPipeline(ImagesPipeline):
             raise DropItem("Image download failed")
         
         return item
-
-class CricbuzzNewsScrapingPipeline:
-    def process_item(self, item, spider):
-        # if item.get('published_at'):
-        #     try:
-        #         # item['published_at'] = datetime.strptime(item['published_at'], '%Y-%m-%dT%H:%M:%S%z')
-        #         item['published_at'] = datetime.strptime(item['published_at'], '%b %d %a %Y UTC %H:%M:%S').date()
-        #     except ValueError:
-        #         spider.logger.warning(f"Invalid datetime format for news ID {item['news_id']}: {item['published_at']}")
-        # if item.get('description'):
-        #     try:
-        #         summarized_text = summarize_text(item.get('description'))
-        #         item['summary'] = summarized_text
-        #     except ValueError:
-        #         spider.logger.warning(f"Unable to summamarize the description of the news ID {item['news_id']}")
-        item['source'] = 'CB'
-        return item
-
-
-class HindustanTimesNewsScrapingPipeline:
-    def process_item(self, item, spider):
-        # if item.get('published_at'):
-        #     try:
-        #         item['published_at'] = datetime.strptime(item['published_at'], '%Y-%m-%dT%H:%M:%S%z')
-        #     except ValueError:
-        #         spider.logger.warning(f"Invalid datetime format for news ID {item['news_id']}: {item['published_at']}")
-        # if item.get('description'):
-        #     try:
-        #         summarized_text = summarize_text(item.get('description'))
-        #         item['summary'] = summarized_text
-        #     except ValueError:
-        #         spider.logger.warning(f"Unable to summamarize the description of the news ID {item['news_id']}")
-        
-        item['category'] = 'IPL 2024'
-        item['source'] = 'HT'
-        return item
-
 
 class DjangoItemSavingPipeline:
     async def process_item(self, item, spider):
