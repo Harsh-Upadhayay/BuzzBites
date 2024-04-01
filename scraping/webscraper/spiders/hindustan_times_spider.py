@@ -9,9 +9,7 @@ class HindustanTimesSpider(scrapy.Spider):
 
     custom_settings = {
         'ITEM_PIPELINES': {
-            'webscraper.pipelines.HindustanTimesNewsScrapingPipeline': 1,
-            'webscraper.pipelines.DjangoItemSavingPipeline': 2
-
+            'webscraper.pipelines.DjangoItemSavingPipeline': 1
         }
     }
 
@@ -55,4 +53,6 @@ class HindustanTimesSpider(scrapy.Spider):
             title = news_item['news_title'],
             description = TextHandler()._filter_text(story_content),
             published_at = news_item['news_time'],
+            category = 'IPL 2024',
+            source = 'HT'
         )
