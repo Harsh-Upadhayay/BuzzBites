@@ -5,6 +5,8 @@ import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link';
+import { Button } from "@nextui-org/react";
+
 
 export default function Navbar() {
   return (
@@ -46,6 +48,16 @@ export default function Navbar() {
               </svg>
               <span className="sr-only">Toggle sidebar</span>
             </button>
+            <Button radius="full" className='mx-2'>
+              <Link href="/">Home</Link>
+            </Button>
+            <Button radius="full" className='mx-2'>
+            <Link href="/test-memes">Memes</Link>
+          </Button>
+          <Button radius="full" className='mx-2'>
+              <Link href="/test-news">News</Link>
+            </Button>
+
           </div>
           <div className="flex items-center lg:order-2">
             <button
