@@ -21,8 +21,11 @@ export default function RootLayout({ children }) {
       <body className={inter.className}>
         <div className="antialiased bg-gray-50 dark:bg-gray-900">
           <Navbar />
-          <Sidebar />
-          <main className="p-4 md:ml-64 h-auto pt-20">
+          {
+            // here load <Sidebar /> for sidebar
+            // and change class of main to "p-4 md:ml-64 h-auto pt-20"
+          }
+          <main className="p-4 h-auto pt-20">
           <Providers>
             {children}
             </Providers>

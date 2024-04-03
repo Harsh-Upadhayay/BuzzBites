@@ -2,8 +2,6 @@
 
 import Image from "next/image";
 import { useState, useEffect, useRef } from 'react';
-import { Carousel } from 'flowbite-react';
-import Corousel from "../components/Corousel";
 
 export default function Memes() {
     const [memes, setMemes] = useState([]);
