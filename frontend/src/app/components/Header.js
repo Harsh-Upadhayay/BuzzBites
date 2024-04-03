@@ -142,7 +142,7 @@ export default function Header() {
                       New message from
                       <span className="font-semibold text-gray-900 dark:text-white"
                       >Bonnie Green</span
-                      >: "Hey, what's up? All set for the presentation?"
+                      >: &quot;Hey, what&apos;`s up? All set for the presentation?&quot;
                     </div>
                     <div
                       className="text-xs font-medium text-primary-600 dark:text-primary-500"
@@ -1363,7 +1363,7 @@ export default function Header() {
         </div>
       </main>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js" async></script>
     </>
   )
 }
