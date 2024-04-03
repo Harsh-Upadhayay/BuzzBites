@@ -1,9 +1,5 @@
 // import Pages from "./components/Pagination";
-
+import { redirect } from 'next/navigation'
 export default function Home() {
-  return (
-    <div>
-    Home Page
-    </div>
-  );
+  redirect(`/test-memes`)
 }
