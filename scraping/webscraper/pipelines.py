@@ -58,10 +58,8 @@ class ImageProcessingPipeline(ImagesPipeline):
         
         return item
 
-
 class DjangoItemSavingPipeline:
     async def process_item(self, item, spider):
-        
         dj_item = item.save(commit=False)
         await (dj_item.async_save())
         

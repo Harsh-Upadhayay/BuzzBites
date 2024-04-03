@@ -3,7 +3,6 @@ from django.db.models import UniqueConstraint
 from asgiref.sync import sync_to_async
 from django.utils import timezone
 from django.db.utils import IntegrityError
-# Create your models here.
 
 
 class Meme(models.Model):
@@ -56,3 +55,47 @@ class Meme(models.Model):
         ordering = ['-updated_at']
         constraints = [UniqueConstraint(fields=['checksum'], name='unique_checksum')]
         
+
+class NewsArticle(models.Model):
+    SOURCE_CHOICES = [
+        ('CB', 'Cricbuzz news'),
+        ('HT', 'Hindustan Times news')
+    ]
+
+    news_id = models.CharField(
+        max_length=32,
+        null=True,
+        default=None,
+    )
+    title = models.TextField(blank=True)
+    description = models.TextField(blank=True)
+    summary = models.TextField(blank=True)
+    source = models.CharField(
+        max_length=255,
+        choices=SOURCE_CHOICES
+    )
+    url = models.URLField(max_length=400)
+    category = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True
+    )
+    published_at = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True) 
+
+    class Meta:
+        constraints = [UniqueConstraint(fields=['news_id'], name='unique_newsid')]
+
+    @sync_to_async
+    def async_save(self):
+        try:
+            self.save()
+        except IntegrityError:
+            existing_obj = NewsArticle.objects.get(news_id=self.news_id)
+            existing_obj.updated_at = timezone.now()
+            existing_obj.save()
