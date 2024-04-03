@@ -25,7 +25,7 @@ class CricbuzzSpider(scrapy.Spider):
         latest_news_url = response.css('a.cb-nws-hdln-ancr::attr(href)').get()
         latest_news_id = UrlParser(latest_news_url).get_latest_news_id()
         
-        for i in range(4):
+        for i in range(100):
             news_id = int(latest_news_id) - i
             news_url = f"https://www.cricbuzz.com/cricket-news/{news_id}/1"
 
