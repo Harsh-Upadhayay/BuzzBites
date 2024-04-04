@@ -2,7 +2,7 @@ import scrapy
 from ..items import Meme
 import re
 from loguru import logger
-from ..utils.googleImageSearchParser import ParserBuilder
+from ..utils.GoogleResponseParser import ParserBuilder
 
 class GoogleSearchSpider(scrapy.Spider):
     name = 'google_search'
