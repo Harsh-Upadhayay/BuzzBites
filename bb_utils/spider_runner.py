@@ -17,7 +17,9 @@ if __name__ == '__main__':
     queries = generate_queries()
     os.chdir('/home/harsh/BuzzBites/scraping')
     for query in queries:
-        run_spider('google_search', query)
-        logger.info(f"Finished crawling query: {query}")
+        for time_frame in ['day', 'week', 'month', 'year', 'hour']:
+            logger.info(f"Started crawling query: {query} with time_frame: {time_frame}")
+            run_spider('google_search', query, time_frame)
+            logger.info(f"Finished crawling query: {query} with time_frame: {time_frame}")
         
         # break  # Remove this line if you want to crawl all queries
