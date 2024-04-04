@@ -214,7 +214,6 @@ frontend/.pnp.js
 frontend/.yarn/install-state.gz
 frontend//coverage
 frontend/.next/
-frontend/out/
 frontend/build
 frontend/.DS_Store
 frontend/*.pem
