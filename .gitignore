@@ -208,6 +208,21 @@ cython_debug/
 *.tiff
 *.ico
 
+# Scrapyd
+*.egg-info
+*.egg
+*.pyc
+*.pyo
+pycache/
+build/
+dist/
+*.log
+*.pid
+
+Scrapyd logs
+logs/
+
+
 frontend//node_modules
 frontend//.pnp
 frontend/.pnp.js
