@@ -34,18 +34,23 @@ class AddVersionAPIView(APIView):
 
 class ScheduleSpiderAPIView(APIView):
     def get(self, request):
-        project_name = request.query_params.get('project')
-        spider_name = request.query_params.get('spider')
+            project_name = request.query_params.get('project')
+            spider_name = request.query_params.get('spider')
+            spider_args = {}
 
-        if not project_name or not spider_name:
-            return Response({'error': 'Project name and spider name are required'}, status=status.HTTP_400_BAD_REQUEST)
+            # Extract spider arguments from query parameters
+            for param in request.query_params:
+                if param not in ['project', 'spider']:
+                    spider_args[param] = request.query_params[param]
 
-        try:
-            job_id = scrapyd.schedule(project_name, spider_name)
-            return Response({'success': f'Spider {spider_name} scheduled successfully', 'job_id': job_id}, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            if not project_name or not spider_name:
+                return Response({'error': 'Project name and spider name are required'}, status=status.HTTP_400_BAD_REQUEST)
 
+            try:
+                job_id = scrapyd.schedule(project_name, spider_name, **spider_args)
+                return Response({'success': f'Spider {spider_name} scheduled successfully', 'job_id': job_id}, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 class CancelSpiderAPIView(APIView):
     def get(self, request):
         project_name = request.query_params.get('project')
