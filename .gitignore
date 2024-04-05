@@ -218,6 +218,7 @@ build/
 dist/
 *.log
 *.pid
+dbs/
 
 Scrapyd logs
 logs/
