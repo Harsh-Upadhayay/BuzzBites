@@ -54,7 +54,7 @@ class CricbuzzSpider(scrapy.Spider):
                 description += section.css('::text').get() + "\n"
 
             yield NewsArticle (
-                news_id = response.meta['news_id'],
+                news_id = str(response.meta['news_id']),
                 url = news_url,
                 title = TextHandler()._filter_text(news_title),
                 description = TextHandler()._filter_text(description),
