@@ -2,6 +2,7 @@ import scrapy
 from ..items import Meme
 import re
 from loguru import logger
+from ..utils.GoogleResponseParser import ParserBuilder
 
 class GoogleSearchSpider(scrapy.Spider):
     name = 'google_search'
@@ -11,6 +12,7 @@ class GoogleSearchSpider(scrapy.Spider):
         self.base_url = 'https://www.google.com/search?q={query}&tbm=isch{time_frame}'
         self.time_frame = time_frame
         self.query = query
+        self.parser = ParserBuilder.build('2')
         
     def start_requests(self):
         url = self.base_url.format(query=self.query, time_frame=self.get_time_frame())
@@ -23,27 +25,22 @@ class GoogleSearchSpider(scrapy.Spider):
             return '&tbs=qdr:m'
         elif self.time_frame == 'year':
             return '&tbs=qdr:y'
+        elif self.time_frame == 'week':
+            return '&tbs=qdr:w'
+        elif self.time_frame == 'hour':
+            return '&tbs=qdr:h'
         else:
             return ''
             
     def parse(self, response):
-        
-        img_ids = response.css('div[jsaction="TMn9y:cJhY7b;;cFWHmd:s370ud;"] ::attr(data-tbnid)').getall()
-        pattern = r'\{\s*"444383007"\s*:.+?\}'
-
-        matches = re.findall(pattern, response.text)
-        
-        for match in matches:
-            pattern = r'http[^ ^"]+'
-            
-            try:
-                url = (re.findall(pattern, match)[1])
-                yield Meme(search_tag=self.query, img_url=url)    
                 
-            except IndexError:
-                # If the image url is not found, skip the item.
-                pass
+        urls = self.parser.image_sources(response)
+
+        for url in urls:
+            try:
+                yield Meme(search_tag=self.query, img_url=url)    
             except Exception as e:
-                logger.error(f"Error in parse: {e}")
+                logger.exception(e)
+                
                 
 
