@@ -96,6 +96,34 @@ class NewsArticle(models.Model):
         try:
             self.save()
         except IntegrityError:
-            existing_obj = NewsArticle.objects.get(news_id=self.news_id)
-            existing_obj.updated_at = timezone.now()
-            existing_obj.save()
+            try:
+                existing_obj = NewsArticle.objects.get(news_id=self.news_id)
+                existing_obj.check_or_update_fields(self)
+            except NewsArticle.DoesNotExist:
+                pass
+
+    def check_or_update_fields(self, new_instance):
+        """
+        Update the fields of the current NewsArticle instance with the fields from new_instance.
+        Only update fields that have changed.
+        """
+
+        field_updated = False
+        exclude_fields = ['id', 'created_at', 'updated_at']
+
+        for field in self._meta.fields:
+            field_name = field.name
+            if field_name in exclude_fields:
+                continue
+
+            current_value = getattr(self, field_name)
+            new_value = getattr(new_instance, field_name)
+
+            if current_value != new_value:
+                setattr(self, field_name, new_value)
+                field_updated = True
+    
+        if field_updated:
+            self.updated_at = timezone.now()
+            self.summary = ''
+            self.save()
