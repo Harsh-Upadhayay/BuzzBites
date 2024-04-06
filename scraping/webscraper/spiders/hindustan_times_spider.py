@@ -1,11 +1,9 @@
 import scrapy
-from bb_utils.news_utils import TextHandler
 from ..items import NewsArticle
 
 class HindustanTimesSpider(scrapy.Spider):
-    
     name = 'hindustan_times'
-    allowed_domains = ['www.hindustantimes.com']
+    start_urls = ['https://www.hindustantimes.com/topic/ipl/news']
 
     custom_settings = {
         'ITEM_PIPELINES': {
@@ -13,46 +11,58 @@ class HindustanTimesSpider(scrapy.Spider):
         }
     }
 
-    def start_requests(self):
-        url = "https://www.hindustantimes.com/topic/ipl/news"
-
-        yield scrapy.Request(
-            url=url,
-            callback=self.parse_news,
-        )
-
-    def parse_news(self, response):
-        newsList = response.css('div.cartHolder')
-
-        for news in newsList:
+    def parse(self, response):
+        for news in response.css('div.cartHolder'):
+            news_id = news.attrib.get('data-vars-storyid', '')
+            news_url = news.attrib.get('data-weburl', '')
+            news_title = self._filter_text(news.attrib.get('data-vars-story-title', ''))
+            news_time = news.attrib.get('data-vars-story-time', '')
 
             yield scrapy.Request(
-                url = news.attrib['data-weburl'],
-                callback = self.parse_data,
+                url=news_url,
+                callback=self.parse_data,
                 meta={
-                    'item': {
-                        'news_id' : news.attrib['data-vars-storyid'],
-                        'news_url' : news.attrib['data-weburl'],
-                        'news_title' : TextHandler()._filter_text(news.attrib['data-vars-story-title']),
-                        'news_time' : news.attrib['data-vars-story-time']
-                    } 
+                    'news_id': news_id,
+                    'news_url': news_url,
+                    'news_title': news_title,
+                    'news_time': news_time
                 }
             )
 
     def parse_data(self, response):
-        news_item = response.meta['item']
+        news_id = response.meta['news_id']
+        news_url = response.meta['news_url']
+        news_title = response.meta['news_title']
+        news_time = response.meta['news_time']
+
         story_content = []
-
-        news_details = response.css('div.storyDetails p')
-        for news_p in news_details:
+        for news_p in response.css('div.storyDetails p'):
             story_content.append(news_p.css("::text").get())
-
-        yield NewsArticle (
-            news_id = news_item['news_id'],
-            url = news_item['news_url'],
-            title = news_item['news_title'],
-            description = TextHandler()._filter_text(story_content),
-            published_at = news_item['news_time'],
-            category = 'IPL 2024',
-            source = 'HT'
+        
+        yield NewsArticle(
+            news_id=news_id,
+            url=news_url,
+            title=news_title,
+            description=self._filter_text(story_content),
+            published_at=news_time,
+            category='IPL 2024',
+            source='HT'
         )
+
+    def _filter_text(self, text):
+        if isinstance(text, list):
+            if len(text) > 0:
+                try:
+                    return self._filter_text((' ').join(text))
+                except:
+                    return None
+            return None
+        else:
+            if text == None:
+                return None
+            else:
+                text = text.replace(u'\\n', u' ')
+                text = text.replace(u'<br>', u' ')
+                text = ' '.join(text.split())
+			# return ''.join(text).strip()
+        return text
