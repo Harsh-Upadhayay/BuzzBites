@@ -6,7 +6,7 @@ class ArticleUpdater:
         self.list_endpoint = 'generate-summary/'
         self.detail_endpoint = 'generate-summary/{}/'
 
-    def get_articles_with_empty_summary(self):
+    def get_articles(self):
         response = requests.get(self.base_url + self.list_endpoint)
         if response.status_code == 200:
             return response.json()
@@ -14,15 +14,15 @@ class ArticleUpdater:
             print("Failed to retrieve articles with empty summary.")
             return []
 
-    def generate_summary(self, description):
-        return "this is the updated summary"
+    ## TODO: By Niraj matere
+    def generate_summary(self, description_dict):
+        return {
+            1: "this is the updated summary"
+        }
 
-    def update_article_summary(self, article):
+    def update_article(self, article):
         article_id = article['id']
         endpoint = self.detail_endpoint.format(article_id)
-
-        article_description = article['description']
-        article['summary'] = self.generate_summary(article_description)
 
         response = requests.put(self.base_url + endpoint, json=article)
         if response.status_code == 200:
@@ -31,10 +31,17 @@ class ArticleUpdater:
             print(f"Failed to update article {article_id}.")
 
     def process_articles(self):
-        articles = self.get_articles_with_empty_summary()
+        articles = self.get_articles()
         if articles:
+            description_dict = {}
             for article in articles:
-                self.update_article_summary(article)
+                description_dict[article['id']] = article['description']
+            
+            summary_dict = self.generate_summary(description_dict)
+
+            for article in articles:
+                article['summary'] = summary_dict[article['id']]
+                self.update_article(article)
         else:
             print("No articles with empty summary found.")
 
