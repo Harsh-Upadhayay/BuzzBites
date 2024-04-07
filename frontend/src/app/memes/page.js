@@ -80,7 +80,7 @@ export default function Memes() {
         const handleScroll = debounce(() => {
             const columns = document.querySelectorAll('.my-masonry-grid_column');
             const minHeight = Math.min(...Array.from(columns).map(column => column.offsetHeight));
-            if (endOfPageRef.current && window.innerHeight + window.scrollY >= minHeight - 1000) {
+            if (endOfPageRef.current && window.innerHeight + window.scrollY >= minHeight - 20000) {
                 console.log('reached end');
                 if (!loading) {
                     console.log('page changes');
