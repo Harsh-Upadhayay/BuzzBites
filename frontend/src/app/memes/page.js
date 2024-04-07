@@ -121,9 +121,9 @@ export default function Memes() {
                 {memes.map((meme, index) => (
                     <Image
                         key={meme.id}
-                        className="mt-8 cursor-pointer h-auto max-w-full rounded-lg"
+                        className="mt-2 cursor-pointer h-auto max-w-full rounded-lg"
                         src={meme.img_url}
-                        alt="meme photo"
+                        alt={meme.local_path}
                         placeholder="blur"
                         blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/PBOPQAIcAMh5LCUAAAAAABJRU5ErkJggg=="
                         width={500}

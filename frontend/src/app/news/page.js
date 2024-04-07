@@ -76,9 +76,14 @@ export default function App() {
             key={item.id}
             aria-label={`Accordion ${index + 1}`}
             title={item.title}
-            subtitle={`Published : ${readable_time(item.updated_at)} | Source : ${get_actual_source(
-              item.source
-            )}`}
+            subtitle=<div
+            dangerouslySetInnerHTML={{
+              __html: `Published : ${item.published_at}<br>Source : ${get_actual_source(
+                item.source
+              )}`
+            }}
+          />
+            
           >
             <p className="font-normal text-gray-900 dark:text-gray-400">
               {item.description}
