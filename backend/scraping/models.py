@@ -80,11 +80,7 @@ class NewsArticle(models.Model):
         blank=True,
         null=True
     )
-    published_at = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True
-    )
+    published_at = models.DateTimeField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True) 
 

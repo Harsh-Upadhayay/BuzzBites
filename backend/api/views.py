@@ -48,7 +48,7 @@ class NewsListAPIView(generics.ListAPIView):
     serializer_class = NewsArticleSerializer
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
     ordering_fields = '__all__'
-    ordering = ['-updated_at']  # Default ordering by created_at field
+    ordering = ['-published_at']  # Default ordering by created_at field
     pagination_class = NewsListPagination
     filterset_fields = '__all__'  # Enable filtering based on all fields
 
