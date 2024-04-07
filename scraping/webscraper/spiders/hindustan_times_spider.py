@@ -1,6 +1,7 @@
 import scrapy
 from ..items import NewsArticle
 from datetime import datetime
+from loguru import logger
 
 class HindustanTimesSpider(scrapy.Spider):
     name = 'hindustan_times'
@@ -58,7 +59,7 @@ class HindustanTimesSpider(scrapy.Spider):
                 updated_time = datetime.strptime(time_str, "%d %b, %Y %I:%M:%S %p")
             return updated_time.astimezone()
         except ValueError:
-            print(f"Error: Input time string is not in the expected format, format is {time_str}")
+            logger.error(f"Error: Input time string is not in the expected format, format is {time_str}")
             return datetime.now()
 
     def _filter_text(self, text):
