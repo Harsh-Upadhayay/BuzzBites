@@ -1,5 +1,6 @@
 import scrapy
 from ..items import NewsArticle
+from datetime import datetime
 
 class HindustanTimesSpider(scrapy.Spider):
     name = 'hindustan_times'
@@ -44,10 +45,21 @@ class HindustanTimesSpider(scrapy.Spider):
             url=news_url,
             title=news_title,
             description=self._filter_text(story_content),
-            published_at=news_time,
+            published_at=self.parse_time(news_time),
             category='IPL 2024',
             source='HT'
         )
+
+    def parse_time(self, time_str):
+        try:
+            if not time_str:
+                updated_time = datetime.now()
+            else:
+                updated_time = datetime.strptime(time_str, "%d %b, %Y %I:%M:%S %p")
+            return updated_time.astimezone()
+        except ValueError:
+            print(f"Error: Input time string is not in the expected format, format is {time_str}")
+            return datetime.now()
 
     def _filter_text(self, text):
         if isinstance(text, list):
