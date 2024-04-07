@@ -50,17 +50,11 @@ export default function App() {
     };
   }, [loading]);
 
-  const readable_time = (time_str) => {
-    const date = new Date(time_str);
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const day = date.getDate().toString().padStart(2, "0");
-    const hours = date.getHours().toString().padStart(2, "0");
-    const minutes = date.getMinutes().toString().padStart(2, "0");
-    const readableTime = ` ${hours}:${minutes} on ${day}-${month}-${year}`;
-
-    return readableTime;
-  };
+  function convertTimeToReadableDate(timeString) {
+    const date = new Date(timeString);
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    return date.toLocaleString('en-US', options);
+  }
 
   const get_actual_source = (source_name) => {
     if (source_name === "CB") return "Cricbuzz";
@@ -78,7 +72,7 @@ export default function App() {
             title={item.title}
             subtitle=<div
             dangerouslySetInnerHTML={{
-              __html: `Published : ${item.published_at}<br>Source : ${get_actual_source(
+              __html: `Published : ${convertTimeToReadableDate(item.published_at)}<br>Source : ${get_actual_source(
                 item.source
               )}`
             }}
