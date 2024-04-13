@@ -121,5 +121,4 @@ class NewsArticle(models.Model):
     
         if field_updated:
             self.updated_at = timezone.now()
-            self.summary = ''
             self.save()
