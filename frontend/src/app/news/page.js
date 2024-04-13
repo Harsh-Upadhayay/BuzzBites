@@ -1,6 +1,19 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { Accordion, AccordionItem } from "@nextui-org/react";
+import { RadioGroup, Radio } from "@nextui-org/react";
+
+function convertTimeToReadableDate(timeString) {
+  const date = new Date(timeString);
+  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  return date.toLocaleString('en-US', options);
+};
+
+const getActualSource = (sourceName) => {
+  if (sourceName === "CB") return "Cricbuzz";
+  else if (sourceName === "HT") return "Hindustan Times";
+  else return "Unknown";
+};
 
 export default function App() {
   const [news, setNews] = useState([]);
@@ -22,7 +35,9 @@ export default function App() {
         if (data.detail === "Invalid page.") {
           setHasMore(false);
         } else {
-          setNews((prevNews) => [...prevNews, ...data.results]);
+          // Initialize the selected radio value for each item to 'desc'
+          const updatedNews = data.results.map(item => ({ ...item, selectedRadio: 'desc' }));
+          setNews((prevNews) => [...prevNews, ...updatedNews]);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -50,39 +65,48 @@ export default function App() {
     };
   }, [loading]);
 
-  function convertTimeToReadableDate(timeString) {
-    const date = new Date(timeString);
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    return date.toLocaleString('en-US', options);
-  }
-
-  const get_actual_source = (source_name) => {
-    if (source_name === "CB") return "Cricbuzz";
-    else if (source_name === "HT") return "Hindustan Times";
-    else return "Unknown";
+  const handleRadioChange = (e, index) => {
+    const { value } = e.target;
+    setNews(prevNews => {
+      const updatedNews = [...prevNews];
+      updatedNews[index].selectedRadio = value;
+      return updatedNews;
+    });
   };
 
   return (
     <div className="">
-      <Accordion variant="splitted" className="">
+      <Accordion variant="splitted" selectionMode="multiple" className="">
         {news.map((item, index) => (
           <AccordionItem
             key={item.id}
-            aria-label={`Accordion ${index + 1}`}
+            aria-label={`Accordion ${item.id}`}
             title={item.title}
-            subtitle=<div
-            dangerouslySetInnerHTML={{
-              __html: `Published : ${convertTimeToReadableDate(item.published_at)}<br>Source : ${get_actual_source(
-                item.source
-              )}`
-            }}
-          />
-            
-          >
-            <p className="font-normal text-gray-900 dark:text-gray-400">
-              {item.description}
-            </p>
-          </AccordionItem>
+            subtitle={
+                <div
+                    dangerouslySetInnerHTML={{
+                        __html: `Published : ${convertTimeToReadableDate(item.published_at)}<br>Source : ${getActualSource(
+                            item.source
+                        )}`,
+                    }}
+                />
+            }
+        >
+            <RadioGroup
+                className="mb-3"
+                orientation="horizontal"
+                color="warning"
+                value={item.selectedRadio}
+                onChange={(e) => handleRadioChange(e, index)}
+            >
+                <Radio value="summary">Summary</Radio>
+                <Radio value="desc">Description</Radio>
+                <Radio value="hindi">Hindi</Radio>
+            </RadioGroup>
+            {item.selectedRadio === 'summary' && <p className="font-normal text-gray-900 dark:text-gray-400">{item.description}</p>}
+            {item.selectedRadio === 'desc' && <p className="font-normal text-gray-900 dark:text-gray-400">{item.description}</p>}
+            {item.selectedRadio === 'hindi' && <p className="font-normal text-gray-900 dark:text-gray-400">{item.hindi}</p>}
+        </AccordionItem>
         ))}
       </Accordion>
       {loading && <p>Loading...</p>}
