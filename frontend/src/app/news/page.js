@@ -36,7 +36,7 @@ export default function App() {
           setHasMore(false);
         } else {
           // Initialize the selected radio value for each item to 'desc'
-          const updatedNews = data.results.map(item => ({ ...item, selectedRadio: 'desc' }));
+          const updatedNews = data.results.map(item => ({ ...item, selectedRadio: 'summary_en' }));
           setNews((prevNews) => [...prevNews, ...updatedNews]);
         }
       } catch (error) {
@@ -99,13 +99,11 @@ export default function App() {
                 value={item.selectedRadio}
                 onChange={(e) => handleRadioChange(e, index)}
             >
-                <Radio value="summary">Summary</Radio>
-                <Radio value="desc">Description</Radio>
-                <Radio value="hindi">Hindi</Radio>
+                <Radio value="summary_en">Read in English</Radio>
+                <Radio value="summary_hi">Read in Hindi</Radio>
             </RadioGroup>
-            {item.selectedRadio === 'summary' && <p className="font-normal text-gray-900 dark:text-gray-400">{item.description}</p>}
-            {item.selectedRadio === 'desc' && <p className="font-normal text-gray-900 dark:text-gray-400">{item.description}</p>}
-            {item.selectedRadio === 'hindi' && <p className="font-normal text-gray-900 dark:text-gray-400">{item.hindi}</p>}
+            {item.selectedRadio === 'summary_en' && <p className="font-normal text-gray-900 dark:text-gray-400">{item.summary}</p>}
+            {item.selectedRadio === 'summary_hi' && <p className="font-normal text-gray-900 dark:text-gray-400">{item.summary_hindi}</p>}
         </AccordionItem>
         ))}
       </Accordion>
