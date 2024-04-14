@@ -69,7 +69,8 @@ class NewsArticle(models.Model):
     )
     title = models.TextField(blank=True)
     description = models.TextField(blank=True)
-    summary = models.TextField(blank=True)
+    summary = models.TextField(blank=True, null=True)
+    summary_hindi = models.TextField(blank=True, null=True)
     source = models.CharField(
         max_length=255,
         choices=SOURCE_CHOICES
@@ -105,7 +106,7 @@ class NewsArticle(models.Model):
         """
 
         field_updated = False
-        exclude_fields = ['id', 'created_at', 'updated_at']
+        exclude_fields = ['id', 'created_at', 'updated_at', 'summary', 'summary_hindi']
 
         for field in self._meta.fields:
             field_name = field.name
