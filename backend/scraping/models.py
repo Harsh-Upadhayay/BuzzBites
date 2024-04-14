@@ -69,8 +69,8 @@ class NewsArticle(models.Model):
     )
     title = models.TextField(blank=True)
     description = models.TextField(blank=True)
-    summary = models.TextField(blank=True)
-    summary_hindi = models.TextField(blank=True)
+    summary = models.TextField(blank=True, null=True)
+    summary_hindi = models.TextField(blank=True, null=True)
     source = models.CharField(
         max_length=255,
         choices=SOURCE_CHOICES
