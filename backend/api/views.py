@@ -35,9 +35,9 @@ class MemeListAPIView(generics.ListAPIView):
     serializer_class = MemeSerializer
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
     ordering_fields = '__all__'
-    ordering = ['-created_at']  # Default ordering by created_at field
+    ordering = ['-created_at']
     pagination_class = MemeListPagination
-    filterset_fields = '__all__'  # Enable filtering based on all fields
+    filterset_fields = '__all__'
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -48,17 +48,18 @@ class NewsListAPIView(generics.ListAPIView):
     serializer_class = NewsArticleSerializer
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
     ordering_fields = '__all__'
-    ordering = ['-published_at']  # Default ordering by created_at field
+    ordering = ['-published_at']
     pagination_class = NewsListPagination
-    filterset_fields = '__all__'  # Enable filtering based on all fields
+    filterset_fields = '__all__'
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        queryset = queryset.filter(summary__isnull=False)
         return queryset
 
 class NewsSummaryGeneratorListAPIView(APIView):
     def get(self, request):
-        news_articles = NewsArticle.objects.filter(summary='')
+        news_articles = NewsArticle.objects.filter(summary__isnull = True)
         serializer = NewsArticleSerializer(news_articles, many=True)
         return Response(serializer.data)
 
