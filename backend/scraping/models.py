@@ -123,3 +123,74 @@ class NewsArticle(models.Model):
         if field_updated:
             self.updated_at = timezone.now()
             self.save()
+
+
+class MatchReport(models.Model):
+    SOURCE_CHOICES = [
+        ('IPLT20', 'IPL official website'),
+    ]
+
+    report_id = models.CharField(
+        max_length=32,
+        null=True,
+        default=None,
+    )
+    title = models.TextField(blank=True)
+    description = models.TextField(blank=True)
+    summary = models.TextField(blank=True, null=True)
+    summary_hindi = models.TextField(blank=True, null=True)
+    source = models.CharField(
+        max_length=255,
+        choices=SOURCE_CHOICES
+    )
+    url = models.URLField(max_length=400)
+    category = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True
+    )
+    match_no = models.IntegerField(
+        null=True
+    )
+    published_at = models.TextField(null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True) 
+
+    class Meta:
+        constraints = [UniqueConstraint(fields=['report_id'], name='unique_reportid')]
+
+    @sync_to_async
+    def async_save(self):
+        try:
+            self.save()
+        except IntegrityError:
+            try:
+                existing_obj = NewsArticle.objects.get(report_id=self.report_id)
+                existing_obj.check_or_update_fields(self)
+            except NewsArticle.DoesNotExist:
+                pass
+
+    def check_or_update_fields(self, new_instance):
+        """
+        Update the fields of the current NewsArticle instance with the fields from new_instance.
+        Only update fields that have changed.
+        """
+
+        field_updated = False
+        exclude_fields = ['id', 'created_at', 'updated_at', 'summary', 'summary_hindi']
+
+        for field in self._meta.fields:
+            field_name = field.name
+            if field_name in exclude_fields:
+                continue
+
+            current_value = getattr(self, field_name)
+            new_value = getattr(new_instance, field_name)
+
+            if current_value != new_value:
+                setattr(self, field_name, new_value)
+                field_updated = True
+    
+        if field_updated:
+            self.updated_at = timezone.now()
+            self.save()
