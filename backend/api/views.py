@@ -5,7 +5,9 @@ from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
-from django.http import Http404
+from django.http import Http404, JsonResponse
+from django.core.management import call_command
+
 
 from scraping.models import (
     Meme,
@@ -83,3 +85,8 @@ class NewsSummaryGeneratorDetail(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+def translate_summary_trigger(request):
+    call_command('translate_summary')
+    return JsonResponse({'message': 'Translation of summaries to Hindi initiated.'})
