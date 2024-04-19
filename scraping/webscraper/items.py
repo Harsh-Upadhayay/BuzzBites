@@ -13,3 +13,6 @@ class Meme(DjangoItem):
 
 class NewsArticle(DjangoItem):
     django_model = models.NewsArticle
+
+class MatchReport(DjangoItem):
+    django_model = models.MatchReport 
