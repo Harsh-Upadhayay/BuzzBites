@@ -5,6 +5,7 @@ class ArticleUpdater:
         self.base_url = base_url
         self.list_endpoint = 'generate-summary/'
         self.detail_endpoint = 'generate-summary/{}/'
+        self.trigger_endpoint = 'translate-summary-trigger/'
 
     def get_articles(self):
         response = requests.get(self.base_url + self.list_endpoint)
@@ -45,8 +46,16 @@ class ArticleUpdater:
         else:
             print("No articles with empty summary found.")
 
+    def schedule_translation(self):
+        response = requests.get(self.base_url + self.trigger_endpoint)
+        if response.status_code == 200:
+            print("Translation of summaries to Hindi initiated on the remote server.")
+        else:
+            print("Failed to trigger translation of summaries to Hindi on the remote server.")
+
 if __name__ == '__main__':
-    base_url = 'http://localhost:8000/api/'
+    base_url = 'http://68.183.82.126/api/'
 
     updater = ArticleUpdater(base_url)
     updater.process_articles()
+    updater.schedule_translation()
