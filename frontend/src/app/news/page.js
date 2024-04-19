@@ -1,6 +1,19 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { Accordion, AccordionItem } from "@nextui-org/react";
+import { RadioGroup, Radio } from "@nextui-org/react";
+
+function convertTimeToReadableDate(timeString) {
+  const date = new Date(timeString);
+  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  return date.toLocaleString('en-US', options);
+};
+
+const getActualSource = (sourceName) => {
+  if (sourceName === "CB") return "Cricbuzz";
+  else if (sourceName === "HT") return "Hindustan Times";
+  else return "Unknown";
+};
 
 export default function App() {
   const [news, setNews] = useState([]);
@@ -22,7 +35,9 @@ export default function App() {
         if (data.detail === "Invalid page.") {
           setHasMore(false);
         } else {
-          setNews((prevNews) => [...prevNews, ...data.results]);
+          // Initialize the selected radio value for each item to 'desc'
+          const updatedNews = data.results.map(item => ({ ...item, selectedRadio: 'summary_en' }));
+          setNews((prevNews) => [...prevNews, ...updatedNews]);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -50,40 +65,46 @@ export default function App() {
     };
   }, [loading]);
 
-  const readable_time = (time_str) => {
-    const date = new Date(time_str);
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const day = date.getDate().toString().padStart(2, "0");
-    const hours = date.getHours().toString().padStart(2, "0");
-    const minutes = date.getMinutes().toString().padStart(2, "0");
-    const readableTime = ` ${hours}:${minutes} on ${day}-${month}-${year}`;
-
-    return readableTime;
-  };
-
-  const get_actual_source = (source_name) => {
-    if (source_name === "CB") return "Cricbuzz";
-    else if (source_name === "HT") return "Hindustan Times";
-    else return "Unknown";
+  const handleRadioChange = (e, index) => {
+    const { value } = e.target;
+    setNews(prevNews => {
+      const updatedNews = [...prevNews];
+      updatedNews[index].selectedRadio = value;
+      return updatedNews;
+    });
   };
 
   return (
     <div className="">
-      <Accordion variant="splitted" className="">
+      <Accordion variant="splitted" selectionMode="multiple" className="">
         {news.map((item, index) => (
           <AccordionItem
             key={item.id}
-            aria-label={`Accordion ${index + 1}`}
+            aria-label={`Accordion ${item.id}`}
             title={item.title}
-            subtitle={`Published : ${readable_time(item.updated_at)} | Source : ${get_actual_source(
-              item.source
-            )}`}
-          >
-            <p className="font-normal text-gray-900 dark:text-gray-400">
-              {item.description}
-            </p>
-          </AccordionItem>
+            subtitle={
+                <div
+                    dangerouslySetInnerHTML={{
+                        __html: `Published : ${convertTimeToReadableDate(item.published_at)}<br>Source : ${getActualSource(
+                            item.source
+                        )}`,
+                    }}
+                />
+            }
+        >
+            <RadioGroup
+                className="mb-3"
+                orientation="horizontal"
+                color="warning"
+                value={item.selectedRadio}
+                onChange={(e) => handleRadioChange(e, index)}
+            >
+                <Radio value="summary_en">Read in English</Radio>
+                <Radio value="summary_hi">Read in Hindi</Radio>
+            </RadioGroup>
+            {item.selectedRadio === 'summary_en' && <p className="font-normal text-gray-900 dark:text-gray-400">{item.summary}</p>}
+            {item.selectedRadio === 'summary_hi' && <p className="font-normal text-gray-900 dark:text-gray-400">{item.summary_hindi}</p>}
+        </AccordionItem>
         ))}
       </Accordion>
       {loading && <p>Loading...</p>}

@@ -22,7 +22,7 @@ function ImageModal({ src, alt, onClose }) {
                         <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                     </svg>
                 </button>
-                <img src={src} alt={alt} className="max-w-screen max-h-svh" />
+                <img src={src} alt={"/" + alt} className="max-w-screen max-h-svh" />
             </div>
         </div>
     );
@@ -30,10 +30,15 @@ function ImageModal({ src, alt, onClose }) {
 
 export default function Memes() {
     const [modalOpen, setModalOpen] = useState(false);
-    const [selectedImage, setSelectedImage] = useState('');
+    const [selectedImage, setSelectedImage] = useState({});
 
-    const openModal = (imageSrc) => {
-        setSelectedImage(imageSrc);
+    const openModal = (imageSrc, imageAlt) => {
+        setSelectedImage(
+            {
+                'src': imageSrc,
+                'alt': imageAlt
+            }
+        );
         setModalOpen(true);
     };
 
@@ -121,21 +126,21 @@ export default function Memes() {
                 {memes.map((meme, index) => (
                     <Image
                         key={meme.id}
-                        className="mt-8 cursor-pointer h-auto max-w-full rounded-lg"
+                        className="mt-2 cursor-pointer h-auto max-w-full rounded-lg"
                         src={meme.img_url}
-                        alt="meme photo"
+                        alt={"/" + meme.local_path}
                         placeholder="blur"
                         blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/PBOPQAIcAMh5LCUAAAAAABJRU5ErkJggg=="
                         width={500}
                         height={500}
-                        onClick={() => openModal(meme.img_url)}
+                        onClick={() => openModal(meme.img_url, meme.local_path)}
                     />
                 ))}
                 <div ref={endOfPageRef} />
             </Masonry>
             {/* Render modal if modalOpen is true */}
             {modalOpen && (
-                <ImageModal src={selectedImage} alt="Meme" onClose={closeModal} />
+                <ImageModal src={selectedImage.src} alt={selectedImage.alt} onClose={closeModal} />
             )}
         </>
     );

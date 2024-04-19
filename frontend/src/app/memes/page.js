@@ -80,7 +80,7 @@ export default function Memes() {
         const handleScroll = debounce(() => {
             const columns = document.querySelectorAll('.my-masonry-grid_column');
             const minHeight = Math.min(...Array.from(columns).map(column => column.offsetHeight));
-            if (endOfPageRef.current && window.innerHeight + window.scrollY >= minHeight - 1000) {
+            if (endOfPageRef.current && window.innerHeight + window.scrollY >= minHeight - 20000) {
                 console.log('reached end');
                 if (!loading) {
                     console.log('page changes');
@@ -121,9 +121,9 @@ export default function Memes() {
                 {memes.map((meme, index) => (
                     <Image
                         key={meme.id}
-                        className="mt-8 cursor-pointer h-auto max-w-full rounded-lg"
+                        className="mt-2 cursor-pointer h-auto max-w-full rounded-lg"
                         src={meme.img_url}
-                        alt="meme photo"
+                        alt={meme.local_path}
                         placeholder="blur"
                         blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/PBOPQAIcAMh5LCUAAAAAABJRU5ErkJggg=="
                         width={500}
