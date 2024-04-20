@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import(
     Meme,
     NewsArticle,
+    MatchReport
 )
 
 class MemeSerializer(serializers.ModelSerializer):
@@ -12,4 +13,9 @@ class MemeSerializer(serializers.ModelSerializer):
 class NewsArticleSerializer(serializers.ModelSerializer):
     class Meta:
         model = NewsArticle
+        fields = '__all__'
+
+class MatchReportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MatchReport
         fields = '__all__'

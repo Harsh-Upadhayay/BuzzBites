@@ -165,9 +165,9 @@ class MatchReport(models.Model):
             self.save()
         except IntegrityError:
             try:
-                existing_obj = NewsArticle.objects.get(report_id=self.report_id)
+                existing_obj = MatchReport.objects.get(report_id=self.report_id)
                 existing_obj.check_or_update_fields(self)
-            except NewsArticle.DoesNotExist:
+            except MatchReport.DoesNotExist:
                 pass
 
     def check_or_update_fields(self, new_instance):
