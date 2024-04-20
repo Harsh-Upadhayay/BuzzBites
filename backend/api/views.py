@@ -12,10 +12,12 @@ from django.core.management import call_command
 from scraping.models import (
     Meme,
     NewsArticle,
+    MatchReport
 )
 from scraping.serializers import (
     MemeSerializer,
-    NewsArticleSerializer
+    NewsArticleSerializer,
+    MatchReportSerializer
 )
 
 
@@ -28,6 +30,11 @@ class MemeListPagination(PageNumberPagination):
     max_page_size = 100
 
 class NewsListPagination(PageNumberPagination):
+    page_size = 30
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+class MatchReportListPagination(PageNumberPagination):
     page_size = 30
     page_size_query_param = 'page_size'
     max_page_size = 100
@@ -57,6 +64,20 @@ class NewsListAPIView(generics.ListAPIView):
     def get_queryset(self):
         queryset = super().get_queryset()
         queryset = queryset.filter(summary__isnull=False)
+        return queryset
+
+class MatchReportListAPIView(generics.ListAPIView):
+    queryset = MatchReport.objects.all()
+    serializer_class = MatchReportSerializer
+    filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
+    ordering_fields = '__all__'
+    ordering = ['-report_id']
+    pagination_class = MatchReportListPagination
+    filterset_fields = '__all__'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        # queryset = queryset.filter(summary__isnull=False)
         return queryset
 
 class NewsSummaryGeneratorListAPIView(APIView):
