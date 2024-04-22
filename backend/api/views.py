@@ -108,6 +108,33 @@ class NewsSummaryGeneratorDetail(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class MatchReportSummaryGeneratorListAPIView(APIView):
+    def get(self, request):
+        match_reports = MatchReport.objects.filter(summary__isnull = True)
+        serializer = MatchReportSerializer(match_reports, many=True)
+        return Response(serializer.data)
+
+class MatchReportSummaryGeneratorDetail(APIView):
+    def get_object(self, pk):
+        try:
+            return MatchReport.objects.get(pk=pk)
+        except MatchReport.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk):
+        match_report = self.get_object(pk)
+        serializer = MatchReportSerializer(match_report)
+        return Response(serializer.data)
+
+    def put(self, request, pk):
+        match_report = self.get_object(pk)
+        serializer = MatchReportSerializer(match_report, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 def translate_summary_trigger(request):
     call_command('translate_summary')
     return JsonResponse({'message': 'Translation of summaries to Hindi initiated.'})

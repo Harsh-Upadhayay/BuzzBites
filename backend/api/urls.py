@@ -5,6 +5,8 @@ from .views import (
     NewsSummaryGeneratorListAPIView,
     NewsSummaryGeneratorDetail,
     MatchReportListAPIView,
+    MatchReportSummaryGeneratorListAPIView,
+    MatchReportSummaryGeneratorDetail,
 
     translate_summary_trigger
 )
@@ -15,5 +17,7 @@ urlpatterns = [
     path('match-report/', MatchReportListAPIView.as_view(), name='match-report-list'),
     path('generate-summary/', NewsSummaryGeneratorListAPIView.as_view(), name='empty-summary-news-list'),
     path('generate-summary/<int:pk>/', NewsSummaryGeneratorDetail.as_view(), name='empty-summary-news-detail'),
+    path('generate-summary-report/', MatchReportSummaryGeneratorListAPIView.as_view(), name='empty-summary-news-list'),
+    path('generate-summary-report/<int:pk>/', MatchReportSummaryGeneratorDetail.as_view(), name='empty-summary-news-detail'),
     path('translate-summary-trigger/', translate_summary_trigger, name='translate-summary-hindi'),
 ]
